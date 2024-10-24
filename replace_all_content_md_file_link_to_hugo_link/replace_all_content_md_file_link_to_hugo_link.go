@@ -21,18 +21,18 @@ func main() {
 	//}
 
 	err := replaceLink(ms, ".")
-	fmt.Println("完成没有锚的链接的替换")
+	fmt.Println("------------------------------------- 完成没有锚的链接的替换 ------------------------------------- ")
 	//err := findLinkWithAnchor(ms, ".")
 	err = replaceLinkWithAnchor(ms, ".")
 	fmt.Println(err)
-	fmt.Println("完成替换带有锚的链接的替换")
-	time.Sleep(999 * time.Second)
+	fmt.Println("------------------------------------- 完成替换带有锚的链接的替换 ------------------------------------- ")
+	time.Sleep(9999 * time.Second)
 }
 
 // 生成map,key为页面原本对应的网址（去除最后面的/），value为页面所在路径的 {{< ref "">}} 格式，其添加了可执行文件所在的文件夹的名称作为前缀)
 func genPageLinkMap(rootDir string, initSize int) map[string]string {
 	m := make(map[string]string, initSize)
-	reLine, err := regexp.Compile("^> 原文: ")
+	reLine, err := regexp.Compile("^> 原文：")
 	if err != nil {
 		log.Fatal(fmt.Errorf("创建正则匹配出现错误：%v\n", err))
 	}
@@ -71,7 +71,7 @@ func genPageLinkMap(rootDir string, initSize int) map[string]string {
 
 	reLink, err := regexp.Compile(`\[[^\]]+\]\(([^\)]+)\)`)
 	if err != nil {
-		log.Fatal(fmt.Errorf("创建正则匹配出现错误：%v\n", err))
+		log.Fatal(fmt.Errorf("创建正则匹配出现错误1：%v\n", err))
 	}
 
 	err = filepath.WalkDir(rootDir, func(path string, d fs.DirEntry, err error) error {
@@ -112,6 +112,9 @@ func genPageLinkMap(rootDir string, initSize int) map[string]string {
 					// 找出链接
 					matches := reLink.FindStringSubmatch(line)
 					if len(matches) > 1 {
+						if matches[1] == "" {
+							break
+						}
 						k := strings.TrimSuffix(matches[1], "/")
 						m[k] = v
 						break
@@ -135,13 +138,14 @@ func genPageLinkMap(rootDir string, initSize int) map[string]string {
 	return m
 }
 
+// 替换链接
 func replaceLink(m map[string]string, rootDir string) error {
 	num := 0
 	defer func() {
-		fmt.Println("已替换链接的个数：", num)
+		fmt.Println("------------------------------------------------------ 已替换链接的个数：", num)
 	}()
 
-	reLine, err := regexp.Compile("^> 原文:")
+	reLine, err := regexp.Compile("^> 原文：")
 	if err != nil {
 		log.Fatal(fmt.Errorf("创建正则匹配出现错误1：%v\n", err))
 	}
@@ -256,10 +260,10 @@ func replaceLink(m map[string]string, rootDir string) error {
 func replaceLinkWithAnchor(m map[string]string, rootDir string) error {
 	num := 0
 	defer func() {
-		fmt.Println("已替换带有锚的链接的个数：", num)
+		fmt.Println("------------------------------------------------------ 已替换带有锚的链接的个数：", num)
 	}()
 
-	reLine, err := regexp.Compile("^> 原文:")
+	reLine, err := regexp.Compile("^> 原文：")
 	if err != nil {
 		log.Fatal(fmt.Errorf("创建正则匹配出现错误1：%v\n", err))
 	}
