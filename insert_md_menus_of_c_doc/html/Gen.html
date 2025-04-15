@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>函数名统计</title>
+</head>
+
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+<div class="bg-white p-8 rounded shadow-md w-full max-w-2xl">
+    <h1 class="text-2xl font-bold mb-4">C 函数名统计</h1>
+    <textarea id="inputTextarea" class="w-full p-2 border border-gray-300 rounded mb-4 h-32"
+              placeholder="请输入 C 函数声明，可包含换行"></textarea>
+    <button id="countButton"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4">统计函数名</button>
+    <textarea id="outputTextarea" class="w-full p-2 border border-gray-300 rounded mb-4 h-32"
+              readonly></textarea>
+    <button id="copyButton"
+            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">复制结果</button>
+</div>
+
+<script>
+    const inputTextarea = document.getElementById('inputTextarea');
+    const outputTextarea = document.getElementById('outputTextarea');
+    const countButton = document.getElementById('countButton');
+    const copyButton = document.getElementById('copyButton');
+
+    countButton.addEventListener('click', () => {
+        const input = inputTextarea.value;
+        const lines = input.split('\n');
+        const functionNames = [];
+
+        lines.forEach(line => {
+            const match = line.match(/\w+\s+(\w+)\s*\(/);
+            if (match) {
+                functionNames.push(match[1]);
+            }
+        });
+
+        outputTextarea.value = functionNames.join(' ');
+    });
+
+    copyButton.addEventListener('click', () => {
+        outputTextarea.select();
+        document.execCommand('copy');
+    });
+</script>
+</body>
+
+</html>

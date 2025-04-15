@@ -34,6 +34,8 @@ func findSectionStart(lines []string, sectionType string) int {
 func insertSubmenu(lines []string, start int, newSubmenu string) []string {
 	l := len(lines)
 	insertIndex := start + 1
+	hadExisted := false
+
 	for i := start + 1; i < l; i++ {
 		line := lines[i]
 		if !strings.HasPrefix(line, "### ") && !strings.HasPrefix(line, "## ") {
@@ -42,8 +44,17 @@ func insertSubmenu(lines []string, start int, newSubmenu string) []string {
 		}
 
 		if strings.HasPrefix(line, "### ") {
-			existingSubmenu := strings.TrimPrefix(line, "### ")
-			if newSubmenu < existingSubmenu {
+			line = strings.TrimPrefix(line, "### ")
+			line = strings.TrimSpace(line)
+			line = strings.TrimSuffix(line, " <- 99+")
+			line = strings.TrimSuffix(line, " <- 11+")
+			line = strings.TrimSuffix(line, " <- 95+")
+			line = strings.TrimSuffix(line, " <- 17+")
+			line = strings.TrimSuffix(line, " <- 23+")
+			if newSubmenu == line {
+				hadExisted = true
+				break
+			} else if newSubmenu < line {
 				insertIndex = i
 				break
 			}
@@ -54,24 +65,28 @@ func insertSubmenu(lines []string, start int, newSubmenu string) []string {
 		}
 	}
 
-	newLines := make([]string, 0, len(lines)+4)
-	if insertIndex <= l {
-		newLines = append(newLines, lines[:insertIndex]...)
+	if !hadExisted {
+		newLines := make([]string, 0, len(lines)+4)
+		if insertIndex <= l {
+			newLines = append(newLines, lines[:insertIndex]...)
+		} else {
+			newLines = append(newLines, lines[:insertIndex-1]...)
+		}
+
+		newLines = append(newLines, fmt.Sprintf("### %s\n", newSubmenu))
+		newLines = append(newLines, fmt.Sprintf("原址：\n"))
+		newLines = append(newLines, fmt.Sprintf("```c\n"))
+		newLines = append(newLines, fmt.Sprintf("```\n"))
+		newLines = append(newLines, fmt.Sprintf("\n"))
+		newLines = append(newLines, fmt.Sprintf("\n"))
+		if insertIndex < l {
+			newLines = append(newLines, lines[insertIndex:]...)
+		}
+		return newLines
 	} else {
-		newLines = append(newLines, lines[:insertIndex-1]...)
+		return lines
 	}
 
-	newLines = append(newLines, fmt.Sprintf("### %s\n", newSubmenu))
-	newLines = append(newLines, fmt.Sprintf("原址：\n"))
-	newLines = append(newLines, fmt.Sprintf("```c\n"))
-	newLines = append(newLines, fmt.Sprintf("```\n"))
-	newLines = append(newLines, fmt.Sprintf("\n"))
-	newLines = append(newLines, fmt.Sprintf("\n"))
-	if insertIndex < l {
-		newLines = append(newLines, lines[insertIndex:]...)
-	}
-
-	return newLines
 }
 
 func insertSubmenus(lines []string, start int, newSubmenus []string) []string {

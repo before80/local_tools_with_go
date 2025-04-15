@@ -47,6 +47,7 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("!@"), ">"},
 		{regexp.MustCompile("@!"), "<"},
 		{regexp.MustCompile("### 返回值"), "**返回值**"},
+		{regexp.MustCompile("### 注意"), "**注意**"},
 		{regexp.MustCompile("### 注解"), "**注解**"},
 		{regexp.MustCompile("### 示例"), "**示例**"},
 		{regexp.MustCompile("### 参数"), "**参数**"},
