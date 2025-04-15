@@ -1,9 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 func main() {
-	a := []int{1, 2, 3}
-	fmt.Println(a[0:0])
-	fmt.Println(a[0:3])
+	text := `z"**\n**"z`
+	re := regexp.MustCompile(`"\*\*\\n\*\*"`)
+	res := re.ReplaceAllString(text, "X")
+	fmt.Println(res)
 }
