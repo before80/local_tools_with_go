@@ -11,40 +11,91 @@
 
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
 <div class="bg-white p-8 rounded shadow-md w-full max-w-2xl">
-    <h1 class="text-2xl font-bold mb-4">C 函数名统计</h1>
+    <h1 class="text-2xl font-bold mb-4">C 类型、宏和函数名统计</h1>
     <textarea id="inputTextarea" class="w-full p-2 border border-gray-300 rounded mb-4 h-32"
-              placeholder="请输入 C 函数声明，可包含换行"></textarea>
+              placeholder="请输入 C 代码，可包含换行"></textarea>
     <button id="countButton"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4">统计函数名</button>
-    <textarea id="outputTextarea" class="w-full p-2 border border-gray-300 rounded mb-4 h-32"
-              readonly></textarea>
-    <button id="copyButton"
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">复制结果</button>
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4">统计</button>
+
+    <div class="mb-4">
+        <label for="typeOutput" class="block text-sm font-medium text-gray-700">类型名称</label>
+        <textarea id="typeOutput" class="w-full p-2 border border-gray-300 rounded mb-2 h-16"
+                  readonly></textarea>
+        <button id="copyTypeButton"
+                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">复制类型名称</button>
+    </div>
+
+    <div class="mb-4">
+        <label for="macroOutput" class="block text-sm font-medium text-gray-700">宏名称</label>
+        <textarea id="macroOutput" class="w-full p-2 border border-gray-300 rounded mb-2 h-16"
+                  readonly></textarea>
+        <button id="copyMacroButton"
+                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">复制宏名称</button>
+    </div>
+
+    <div>
+        <label for="functionOutput" class="block text-sm font-medium text-gray-700">函数名</label>
+        <textarea id="functionOutput" class="w-full p-2 border border-gray-300 rounded mb-2 h-16"
+                  readonly></textarea>
+        <button id="copyFunctionButton"
+                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">复制函数名</button>
+    </div>
 </div>
 
 <script>
     const inputTextarea = document.getElementById('inputTextarea');
-    const outputTextarea = document.getElementById('outputTextarea');
+    const typeOutput = document.getElementById('typeOutput');
+    const macroOutput = document.getElementById('macroOutput');
+    const functionOutput = document.getElementById('functionOutput');
     const countButton = document.getElementById('countButton');
-    const copyButton = document.getElementById('copyButton');
+    const copyTypeButton = document.getElementById('copyTypeButton');
+    const copyMacroButton = document.getElementById('copyMacroButton');
+    const copyFunctionButton = document.getElementById('copyFunctionButton');
 
     countButton.addEventListener('click', () => {
         const input = inputTextarea.value;
         const lines = input.split('\n');
+        const typeNames = [];
+        const macroNames = [];
         const functionNames = [];
 
         lines.forEach(line => {
-            const match = line.match(/\w+\s+(\w+)\s*\(/);
-            if (match) {
-                functionNames.push(match[1]);
+            // 匹配类型名称
+            const typeMatch = line.match(/typedef\s+.*\s+(\w+);/);
+            if (typeMatch) {
+                typeNames.push(typeMatch[1]);
+            }
+
+            // 匹配宏名称
+            const macroMatch = line.match(/#define\s+(\w+)\s+/);
+            if (macroMatch) {
+                macroNames.push(macroMatch[1]);
+            }
+
+            // 匹配函数名
+            const functionMatch = line.match(/\w+\s+(\w+)\s*\(/);
+            if (functionMatch) {
+                functionNames.push(functionMatch[1]);
             }
         });
 
-        outputTextarea.value = functionNames.join(' ');
+        typeOutput.value = typeNames.join(' ');
+        macroOutput.value = macroNames.join(' ');
+        functionOutput.value = functionNames.join(' ');
     });
 
-    copyButton.addEventListener('click', () => {
-        outputTextarea.select();
+    copyTypeButton.addEventListener('click', () => {
+        typeOutput.select();
+        document.execCommand('copy');
+    });
+
+    copyMacroButton.addEventListener('click', () => {
+        macroOutput.select();
+        document.execCommand('copy');
+    });
+
+    copyFunctionButton.addEventListener('click', () => {
+        functionOutput.select();
         document.execCommand('copy');
     });
 </script>
