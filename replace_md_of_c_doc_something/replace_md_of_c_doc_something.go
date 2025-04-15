@@ -50,8 +50,10 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("### 注解"), "**注解**"},
 		{regexp.MustCompile("### 示例"), "**示例**"},
 		{regexp.MustCompile("### 参数"), "**参数**"},
-		{regexp.MustCompile("&zeroWidthSpace;"), "​"},
+		{regexp.MustCompile("&zeroWidthSpace;"), "​\t"},
 		{regexp.MustCompile(`### ([a-zA-Z_]+) <- \(C(\d+) 起\)`), "### $1 <- $2+"},
+		{regexp.MustCompile(`原址：([a-zA-Z0-9_:/?.#=&-]+)`), "原址：[$1]($1)"},
+		{regexp.MustCompile(`运行此代码`), ""},
 	}
 
 	modified := false
