@@ -59,7 +59,8 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("&zeroWidthSpace;"), "​\t"},
 		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?\(C(\d+)\s*?起\)`), "### $1 <- $2+"},
 		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?<-\s*?\(C(\d+)\s*?起\)`), "### $1 <- $2+"},
-		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?<-\s*?(\d{2}\+)\s*?\(C(\d{2})\s*?移除\)`), "### $1 <- $2 $3 D"},
+		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?<-\s*?(\d{2}\+)\s*?\(C(\d{2})\s*?移除\)`), "### $1 <- $2 $3 R"},
+		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?<-\s*?(\d{2}\+)\s*?\(C(\d{2})\s*?弃用\)`), "### $1 <- $2 $3 D"},
 		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?<-\s*?(\d{2}\+)\s*?\(C(\d{2})\s*?前\)`), "### $1 <- $2 $3 F"},
 		{regexp.MustCompile(`原址：([a-zA-Z0-9_:/?.#=&-]+)`), "原址：[$1]($1)"},
 		{regexp.MustCompile(`运行此代码`), ""},
@@ -119,7 +120,7 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("`\\*\\*INF\\*\\*`"), "`INF`"},
 		{regexp.MustCompile("`\\*\\*INFINITY\\*\\*`"), "`INFINITY`"},
 		{regexp.MustCompile("`\\*\\*NAN\\*\\*`"), "`NAN`"},
-		{regexp.MustCompile("\n+\\s*?```\n{2,}"), "\n```\n\n"},
+		{regexp.MustCompile("\n+\\s*?```\n{6,}"), "\n```\n\n\n\n\n"},
 	}
 
 	modified := false

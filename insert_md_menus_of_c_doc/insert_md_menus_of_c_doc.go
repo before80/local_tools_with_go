@@ -68,7 +68,7 @@ func insertSubmenu(lines []string, start int, newSubmenu string) []string {
 	}
 
 	if !hadExisted {
-		newLines := make([]string, 0, len(lines)+4)
+		newLines := make([]string, 0, len(lines)+8)
 		if insertIndex <= l {
 			newLines = append(newLines, lines[:insertIndex]...)
 		} else {
@@ -79,6 +79,8 @@ func insertSubmenu(lines []string, start int, newSubmenu string) []string {
 		newLines = append(newLines, fmt.Sprintf("原址：\n"))
 		newLines = append(newLines, fmt.Sprintf("```c\n"))
 		newLines = append(newLines, fmt.Sprintf("```\n"))
+		newLines = append(newLines, fmt.Sprintf("\n"))
+		newLines = append(newLines, fmt.Sprintf("\n"))
 		newLines = append(newLines, fmt.Sprintf("\n"))
 		newLines = append(newLines, fmt.Sprintf("\n"))
 		if insertIndex < l {
