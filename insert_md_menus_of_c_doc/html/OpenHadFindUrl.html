@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open URLs</title>
+</head>
+
+<body>
+<button id="openUrlsButton">打开所有 URL</button>
+<script>
+    document.getElementById('openUrlsButton').addEventListener('click', function () {
+        const mwGeshiDivs = document.querySelectorAll('div.mw-geshi');
+        const allUrls = [];
+
+        mwGeshiDivs.forEach((div) => {
+            const aElements = div.querySelectorAll('a');
+            aElements.forEach((a) => {
+                const url = a.href;
+                if (url) {
+                    allUrls.push(url);
+                }
+            });
+        });
+
+        const uniqueUrls = [...new Set(allUrls)];
+
+        uniqueUrls.forEach((url) => {
+            window.open(url, '_blank');
+        });
+    });
+</script>
+</body>
+
+</html>

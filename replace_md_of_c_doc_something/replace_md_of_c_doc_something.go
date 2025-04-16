@@ -35,7 +35,8 @@ func replaceInFile(filePath string) (bool, error) {
 		pattern     *regexp.Regexp
 		replacement string
 	}{
-		{regexp.MustCompile("\n\n```\\s*?\n&zeroWidthSpace;"), "```\n&zeroWidthSpace;"},
+		{regexp.MustCompile(`title\s*?=\s*?"([a-zA-Z]+)"`), "title = \"<$1.h>\""},
+		{regexp.MustCompile("\n+```\n{2,}&zeroWidthSpace;"), "\n```\n\n&zeroWidthSpace;"},
 		{regexp.MustCompile("输出：\\s*?\n```\\s*?\n"), "输出：\n\n```txt\n"},
 		{regexp.MustCompile("```\\s*?\n#include"), "```c\n#include"},
 		{regexp.MustCompile("```\\s*?\ntypedef"), "```c\ntypedef"},
@@ -53,6 +54,7 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("### 注解"), "**注解**"},
 		{regexp.MustCompile("### 示例"), "**示例**"},
 		{regexp.MustCompile("### 参数"), "**参数**"},
+		{regexp.MustCompile("### 可能的实现"), "**可能的实现**"},
 		{regexp.MustCompile("### 缺陷报告"), "**缺陷报告**"},
 		{regexp.MustCompile("&zeroWidthSpace;"), "​\t"},
 		{regexp.MustCompile(`### ([a-zA-Z_]+)\s*?\(C(\d+)\s*?起\)`), "### $1 <- $2+"},
@@ -97,6 +99,8 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("`\\*\\*%d\\*\\*`"), "`%d`"},
 		{regexp.MustCompile("`\\*\\*%f\\*\\*`"), "`%f`"},
 		{regexp.MustCompile("`\\*\\*%%\\*\\*`"), "`%%`"},
+		{regexp.MustCompile(`'\*\*\\0\*\*'`), "'\\0'"},
+		{regexp.MustCompile("`'\\*\\*\\f\\*\\*'`"), "`'\\f'`"},
 		{regexp.MustCompile(`"\*\*\\f\*\*"`), "`\"\\f\"`"},
 		{regexp.MustCompile(`'\*\*\\f\*\*'`), "`'\\f'`"},
 		{regexp.MustCompile(`"\*\*\\n\*\*"`), "`\"\\n\"`"},
@@ -115,6 +119,7 @@ func replaceInFile(filePath string) (bool, error) {
 		{regexp.MustCompile("`\\*\\*INF\\*\\*`"), "`INF`"},
 		{regexp.MustCompile("`\\*\\*INFINITY\\*\\*`"), "`INFINITY`"},
 		{regexp.MustCompile("`\\*\\*NAN\\*\\*`"), "`NAN`"},
+		{regexp.MustCompile("\n+\\s*?```\n{2,}"), "\n```\n\n"},
 	}
 
 	modified := false
@@ -152,12 +157,13 @@ func main() {
 		_ = keyboard.Close()
 	}()
 
-	files, err := findMarkdownFiles(dir)
-	if err != nil {
-		fmt.Printf("查找 .md 文件时出错: %v\n", err)
-		return
-	}
 	for {
+		files, err := findMarkdownFiles(dir)
+		if err != nil {
+			fmt.Printf("查找 .md 文件时出错: %v\n", err)
+			return
+		}
+
 		replacedCount := 0
 		for _, file := range files {
 			replaced, err := replaceInFile(file)
